@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni"));
         testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
                 "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai", "Jókai Mór", "Édesvíz", "2005",
+        testList.add(new Book("A kőszívű ember fiai és még egyszer a kőszívű ember fiai", "Jókai Mór ráadásul nagyon sokan írták ezt a könyvet", "Édesvíz édesvíz édes édes", "2005",
                 "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni, fel lehet írni, fel lehet írni, fel lehet írni, fel lehet írni"));
         testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
                 "szahar könyv"));
