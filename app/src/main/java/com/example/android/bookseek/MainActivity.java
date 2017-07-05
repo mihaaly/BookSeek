@@ -1,17 +1,23 @@
 package com.example.android.bookseek;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<ArrayList<Book>> {
 
     // BookAdapter.java custom ArrayAdapter
     private BookAdapter mAdapter;
+
+    private static final String JSON_RESPONSE =
+            "https://www.googleapis.com/books/v1/volumes?q=android&maxResults=100";
 
 
     /**
@@ -35,55 +41,44 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ArrayList<Book> testList = new ArrayList<>();
-        testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
-                "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai", "Jókai Mór", "Édesvíz", "2005",
-                "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni"));
-        testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
-                "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai", "Jókai Mór", "Édesvíz", "2005",
-                "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni"));
-        testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
-                "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai és még egyszer a kőszívű ember fiai", "Jókai Mór ráadásul nagyon sokan írták ezt a könyvet", "Édesvíz édesvíz édes édes", "2005",
-                "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni, fel lehet írni, fel lehet írni, fel lehet írni, fel lehet írni"));
-        testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
-                "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai", "Jókai Mór", "Édesvíz", "2005",
-                "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni"));
-        testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
-                "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai", "Jókai Mór", "Édesvíz", "2005",
-                "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni"));
-        testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
-                "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai", "Jókai Mór", "Édesvíz", "2005",
-                "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni"));
-        testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
-                "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai", "Jókai Mór", "Édesvíz", "2005",
-                "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni"));
-        testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
-                "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai", "Jókai Mór", "Édesvíz", "2005",
-                "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni"));
-        testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
-                "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai", "Jókai Mór", "Édesvíz", "2005",
-                "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni"));
-        testList.add(new Book("A helyiség kalapácsa", "Petőfi Sándor", "Móra", "1989",
-                "szahar könyv"));
-        testList.add(new Book("A kőszívű ember fiai", "Jókai Mór", "Édesvíz", "2005",
-                "egy másik kötelező olvasmány, melyet óvodásoknak is fel akartak már írni"));
-
-
         // find ListView in the layout
         ListView listView = (ListView) findViewById(R.id.list);
         // Create a new adapter that takes an empty list of earthquakes as input
-        mAdapter = new BookAdapter(this, testList);
+        mAdapter = new BookAdapter(this, new ArrayList<Book>());
         // set adapter on the ListView to be populated with Book.java objects
         listView.setAdapter(mAdapter);
 
+        // Get a reference to the LoaderManager, in order to interact with loaders.
+        LoaderManager loaderManager = getLoaderManager();
+        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+        // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+        // because this activity implements the LoaderCallbacks interface).
+        loaderManager.initLoader(0, null, this);
+
+    }
+
+    /**
+     * Override LoaderCallback methods:
+     */
+    @Override
+    public Loader<ArrayList<Book>> onCreateLoader(int id, Bundle args) {
+        return new BookLoader(MainActivity.this, JSON_RESPONSE);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<Book>> loader, ArrayList<Book> books) {
+        // Clear the adapter of previous book data
+        mAdapter.clear();
+
+        // if there is a valid list of Books add them to the adapter
+        if (books != null && !books.isEmpty()) {
+            mAdapter.addAll(books);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<Book>> loader) {
+        // Reset Adapter
+        mAdapter.clear();
     }
 }

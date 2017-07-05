@@ -28,7 +28,7 @@ public class Book {
      * @param publisher of the book
      * @param description of the book
      */
-    public Book (String title, String author, String publisher, String date, String description){
+    public Book (String title,  String author, String publisher, String date, String description){
         mTitle = title;
         mAuthor = author;
         mPublisher = publisher;
