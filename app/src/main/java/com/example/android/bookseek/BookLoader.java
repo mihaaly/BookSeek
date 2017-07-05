@@ -34,7 +34,7 @@ public class BookLoader extends AsyncTaskLoader<ArrayList<Book>> {
             return null;
         }
         // feed data into ArryList of Book objects
-        ArrayList<Book> books = Utils.getData(mUrl);
+        ArrayList<Book> books = Utils.getData(mUrl, getContext());
         return books;
     }
 }

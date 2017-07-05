@@ -3,4 +3,11 @@
 
     <!-- App bar SearchView hint -->
     <string name="search_book">Search a book\u2026</string>
+
+    <!-- Missing JSON data related messages -->
+    <string name="no_author">No author is available.</string>
+    <string name="no_title">No title available.</string>
+    <string name="no_description">No description is available.</string>
+    <string name="no_publisher">No publisher information is available.</string>
+    <string name="no_pub_date">No date of publication is available.</string>
 </resources>

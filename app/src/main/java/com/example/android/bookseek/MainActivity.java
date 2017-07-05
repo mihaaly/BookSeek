@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity implements
     private BookAdapter mAdapter;
 
     private static final String JSON_RESPONSE =
-            "https://www.googleapis.com/books/v1/volumes?q=android&maxResults=100";
+            "https://www.googleapis.com/books/v1/volumes?maxResults=40&q={linux%20android}";
 
 
     /**

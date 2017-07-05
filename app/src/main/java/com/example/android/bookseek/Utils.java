@@ -1,5 +1,6 @@
 package com.example.android.bookseek;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -29,15 +30,15 @@ public final class Utils {
     private Utils(){
     }
 
-    public static ArrayList<Book> getData(String urlString){
+    public static ArrayList<Book> getData(String urlString, Context context){
         URL url = createUrl(urlString);
         String jsonResponse = null;
         try {
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error gettin input stream", e);
+            Log.e(LOG_TAG, "Error getting input stream", e);
         }
-        ArrayList<Book> books = extractBooks(jsonResponse);
+        ArrayList<Book> books = extractBooks(jsonResponse, context);
         return books;
     }
 
@@ -87,7 +88,7 @@ public final class Utils {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
+            Log.e(LOG_TAG, "Problem retrieving the book JSON results.", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -119,7 +120,8 @@ public final class Utils {
         return output.toString();
     }
 
-    private static ArrayList<Book> extractBooks(String stringJSON) {
+    private static ArrayList<Book> extractBooks(String stringJSON, Context context) {
+        // TODO: check no value cases for publisher, date etc.
         // If the JSON string is empty or null, then return early.
         if (TextUtils.isEmpty(stringJSON)) {
             return null;
@@ -150,17 +152,25 @@ public final class Utils {
                 JSONObject volumeInfo = book.getJSONObject("volumeInfo");
 
                 // Extract “title” of the book
-                String title = volumeInfo.getString("title");
+                String keyLabelTitle = "title";
+                String title = getKeyValue(volumeInfo, keyLabelTitle, context, R.string.no_title);
 
-                //Extract author(s) of the book
-                String authors = "";
+
+                /**
+                 * Extract author(s) of the book
+                 */
+                String authors;
                 // partially inspired by yowiputra
                 // source: https://discussions.udacity.com/t/trouble-parsing-jsonarray-within-jsonobject/181438/5?u=mihaaly
+                // if there is "authors" key
                 if (volumeInfo.has("authors")){
+                    // get JSONArray for authors
                     JSONArray authorsJA = volumeInfo.getJSONArray("authors");
+                    // temporary storage
                     String authorPartner;
+                    // StringBuffer object for building up authors list
                     StringBuffer authorsBuffer= new StringBuffer(40);
-
+                    // if "authors" key is not empty
                     if (authorsJA.length() > 0 ){
                         for (int k=0; k < authorsJA.length(); k++) {
                             if (k > 0) {
@@ -170,20 +180,32 @@ public final class Utils {
                             authorsBuffer.append(authorPartner);
                         }
                         authors = authorsBuffer.toString();
+                    // if "authors" is empty
+                    } else {
+                        authors = context.getString(R.string.no_author);
                     }
+                // if there are no authors
+                } else {
+                    authors = context.getString(R.string.no_author);
                 }
 
 
-
-
                 // Extract the publisher of the book
-                String publisher = volumeInfo.getString("publisher");
+                String keyLabelPublisher = "publisher";
+                String publisher = getKeyValue(volumeInfo, keyLabelPublisher, context, R.string.no_publisher);
+
 
                 // Extract publication date of the book
-                String pubDate = volumeInfo.getString("publishedDate");
+                String keyLabelPubDate = "publishedDate";
+                String pubDate = getKeyValue(volumeInfo, keyLabelPubDate, context, R.string.no_pub_date);
+
+//                String pubDate = volumeInfo.getString("publishedDate");
+
 
                 // Extract the description of the book
-                String description = volumeInfo.getString("description");
+                String keyLabelDescription = "description";
+                String description = getKeyValue(volumeInfo, keyLabelDescription, context, R.string.no_description);
+//
 
                 // Create Book java object from title, authors, publisher, puDate, description
                 Book currentBook = new Book(title, authors, publisher, pubDate, description);
@@ -195,10 +217,34 @@ public final class Utils {
             // If an error is thrown when executing any of the above statements in the "try" block,
             // catch the exception here, so the app doesn't crash. Print a log message
             // with the message from the exception.
-            Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);
+            Log.e(LOG_TAG, "Problem parsing the book JSON results", e);
         }
 
-        // Return the list of earthquakes
+        // Return the list of books
         return books;
+    }
+
+    /**
+     * Extracts value of a given key to String, or an error message
+     * @param volumeInfo JSONObject containing JSON keys with info on a book
+     * @param keyLabel label of a JSON key (e.g. "title")
+     * @param context
+     * @param resourceID of the string in case the JSON key is missing
+     * @return String with the value of the JSON key or the error message
+     */
+    private static String getKeyValue(JSONObject volumeInfo, String keyLabel, Context context, int resourceID) {
+        // it will contain or the value of the JSON key or an error message
+        String keyValue = "";
+        try {
+            // if the searched key exists
+            if (volumeInfo.has(keyLabel)){
+                keyValue = volumeInfo.getString(keyLabel);
+            } else { // get an error message
+                keyValue = context.getString(resourceID);
+            }
+        } catch (JSONException j){
+            Log.e(LOG_TAG, "Problem retrieving JSON results");
+        }
+        return keyValue;
     }
 }
