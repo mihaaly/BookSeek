@@ -27,8 +27,6 @@ public class MainActivity extends AppCompatActivity implements
     // final query url
     String mJsonResponse;
 
-    // Get a reference to the LoaderManager, in order to interact with loaders.
-    final LoaderManager loaderManager = getLoaderManager();
 
 
 
@@ -49,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
         // set adapter on the ListView to be populated with Book.java objects
         listView.setAdapter(mAdapter);
+
+        // Get a reference to the LoaderManager, in order to interact with loaders.
+        LoaderManager loaderManager = getLoaderManager();
 
         // Initialize the loader. Pass in the int ID constant defined above and pass in null for
         // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
@@ -102,11 +103,9 @@ public class MainActivity extends AppCompatActivity implements
                 // source: https://discussions.udacity.com/t/book-listing-app-construct-the-query-url/203167/3?u=mihaaly
                 mJsonResponse = Uri.encode(mJsonResponse, ":/?&=");
 
-
-
                 // reset loader from previous data
                 Log.i(LOG_TAG, "TEST: restartLoader");
-                loaderManager.restartLoader(0, null, MainActivity.this);
+                getLoaderManager().restartLoader(0, null, MainActivity.this);
 
                 // return false for automatic keyboard hide
                 return false;
