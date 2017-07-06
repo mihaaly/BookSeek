@@ -121,7 +121,6 @@ public final class Utils {
     }
 
     private static ArrayList<Book> extractBooks(String stringJSON, Context context) {
-        // TODO: check no value cases for publisher, date etc.
         // If the JSON string is empty or null, then return early.
         if (TextUtils.isEmpty(stringJSON)) {
             return null;
@@ -199,13 +198,9 @@ public final class Utils {
                 String keyLabelPubDate = "publishedDate";
                 String pubDate = getKeyValue(volumeInfo, keyLabelPubDate, context, R.string.no_pub_date);
 
-//                String pubDate = volumeInfo.getString("publishedDate");
-
-
                 // Extract the description of the book
                 String keyLabelDescription = "description";
                 String description = getKeyValue(volumeInfo, keyLabelDescription, context, R.string.no_description);
-//
 
                 // Create Book java object from title, authors, publisher, puDate, description
                 Book currentBook = new Book(title, authors, publisher, pubDate, description);
