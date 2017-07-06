@@ -31,6 +31,7 @@ public final class Utils {
     }
 
     public static ArrayList<Book> getData(String urlString, Context context){
+        Log.i(LOG_TAG, "TEST: getData");
         URL url = createUrl(urlString);
         String jsonResponse = null;
         try {

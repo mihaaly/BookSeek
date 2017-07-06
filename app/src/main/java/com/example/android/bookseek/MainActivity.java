@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -50,15 +51,8 @@ public class MainActivity extends AppCompatActivity implements
         listView.setAdapter(mAdapter);
 
 
-
-//        // Get a reference to the LoaderManager, in order to interact with loaders.
-//        LoaderManager loaderManager = getLoaderManager();
-//        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
-//        // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
-//        // because this activity implements the LoaderCallbacks interface).
-//        loaderManager.initLoader(0, null, this);
-
     }
+
 
     /**
      * Inflates App bar (e.g. SearchView action view).
@@ -69,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // inflate toolbar_menu.xml
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         // find menu item
@@ -78,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         // set a custom search hint on it
         searchView.setQueryHint(getString(R.string.search_book));
+
+
 
 
         // monitor and get strings typed into SearchView
@@ -100,13 +96,15 @@ public class MainActivity extends AppCompatActivity implements
                 // source: https://discussions.udacity.com/t/book-listing-app-construct-the-query-url/203167/3?u=mihaaly
                 mJsonResponse = Uri.encode(mJsonResponse, ":/?&=");
 
-                // reset loader from previous data
-                loaderManager.restartLoader(0, null, MainActivity.this);
-
                 // Initialize the loader. Pass in the int ID constant defined above and pass in null for
                 // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
                 // because this activity implements the LoaderCallbacks interface).
+                Log.i(LOG_TAG, "TEST: initLoader");
                 loaderManager.initLoader(0, null, MainActivity.this);
+
+                // reset loader from previous data
+                Log.i(LOG_TAG, "TEST: restartLoader");
+                loaderManager.restartLoader(0, null, MainActivity.this);
 
                 // return false for automatic keyboard hide
                 return false;
@@ -120,12 +118,14 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public Loader<ArrayList<Book>> onCreateLoader(int id, Bundle args) {
+        Log.i(LOG_TAG, "TEST: onCreateLoader");
 
         return new BookLoader(MainActivity.this, mJsonResponse);
     }
 
     @Override
     public void onLoadFinished(Loader<ArrayList<Book>> loader, ArrayList<Book> books) {
+        Log.i(LOG_TAG, "TEST: onLoadFinished");
         // Clear the adapter of previous book data
         mAdapter.clear();
 
@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLoaderReset(Loader<ArrayList<Book>> loader) {
+        Log.i(LOG_TAG, "TEST: onLoaderReset");
         // Reset Adapter
         mAdapter.clear();
     }
