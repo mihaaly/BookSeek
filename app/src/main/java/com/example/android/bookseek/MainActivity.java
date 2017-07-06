@@ -50,6 +50,12 @@ public class MainActivity extends AppCompatActivity implements
         // set adapter on the ListView to be populated with Book.java objects
         listView.setAdapter(mAdapter);
 
+        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+        // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+        // because this activity implements the LoaderCallbacks interface).
+        Log.i(LOG_TAG, "TEST: initLoader");
+        loaderManager.initLoader(0, null, MainActivity.this);
+
 
     }
 
@@ -96,11 +102,7 @@ public class MainActivity extends AppCompatActivity implements
                 // source: https://discussions.udacity.com/t/book-listing-app-construct-the-query-url/203167/3?u=mihaaly
                 mJsonResponse = Uri.encode(mJsonResponse, ":/?&=");
 
-                // Initialize the loader. Pass in the int ID constant defined above and pass in null for
-                // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
-                // because this activity implements the LoaderCallbacks interface).
-                Log.i(LOG_TAG, "TEST: initLoader");
-                loaderManager.initLoader(0, null, MainActivity.this);
+
 
                 // reset loader from previous data
                 Log.i(LOG_TAG, "TEST: restartLoader");
