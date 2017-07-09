@@ -7,7 +7,6 @@ import android.util.Log;
 import java.util.ArrayList;
 
 
-
 /**
  * AsyncTaskLoader to fetch data in background and preserve results throughout activity state changes
  */
@@ -17,9 +16,10 @@ public class BookLoader extends AsyncTaskLoader<ArrayList<Book>> {
     // url fro the query
     private String mUrl;
 
+    // log tag for LogCat
     final static String LOG_TAG = "BookLoader";
 
-    public BookLoader(Context context, String url){
+    public BookLoader(Context context, String url) {
         super(context);
         mUrl = url;
     }
@@ -32,6 +32,7 @@ public class BookLoader extends AsyncTaskLoader<ArrayList<Book>> {
 
     /**
      * fetch data in background thread
+     *
      * @return ArrayList of Book objects
      */
     @Override
@@ -40,7 +41,7 @@ public class BookLoader extends AsyncTaskLoader<ArrayList<Book>> {
         if (mUrl == null) {
             return null;
         }
-        // feed data into ArryList of Book objects
+        // feed data into ArrayList of Book objects
         ArrayList<Book> books = Utils.getData(mUrl, getContext());
         return books;
     }

@@ -40,6 +40,12 @@ public class BookAdapter extends ArrayAdapter<Book>{
         // get current Book.java element
         Book currentBook = getItem(position);
 
+        // TODO: Consider checking out the ButterKnife library (http://jakewharton.github.io/butterknife/)
+        // to reduce boilerplate code associated with binding the views.
+        // TODO: You might want to use the ViewHolder pattern to make your list more efficient.
+        // Here's an example:
+        // https://stackoverflow.com/questions/3832254/how-can-i-make-my-arrayadapter-follow-the-viewholder-pattern
+
         /**
          * Author of the book
          */

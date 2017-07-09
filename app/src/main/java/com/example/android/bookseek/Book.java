@@ -23,12 +23,13 @@ public class Book {
 
     /**
      * constructor of the class
-     * @param title of the book
-     * @param author of the book
-     * @param publisher of the book
+     *
+     * @param title       of the book
+     * @param author      of the book
+     * @param publisher   of the book
      * @param description of the book
      */
-    public Book (String title,  String author, String publisher, String date, String description){
+    public Book(String title, String author, String publisher, String date, String description) {
         mTitle = title;
         mAuthor = author;
         mPublisher = publisher;
@@ -36,46 +37,48 @@ public class Book {
         mDescription = description;
     }
 
-
     /**
      * Gets the title of the book.
+     *
      * @return current value of mTitle.
      */
-    public String getTitle(){
+    public String getTitle() {
         return mTitle;
     }
 
-
     /**
      * Gets the author(s) of the book.
+     *
      * @return current value of mAuthor
      */
-    public String getAuthor(){
+    public String getAuthor() {
         return mAuthor;
     }
 
     /**
      * Gets the publisher of the book.
+     *
      * @return current value of mPublisher
      */
-    public String getPublisher(){
+    public String getPublisher() {
         return mPublisher;
     }
 
     /**
      * Gets the date of publication.
+     *
      * @return current value of mDate
      */
-    public String getDate(){
+    public String getDate() {
         return mDate;
     }
 
     /**
      * Gets the description book.
+     *
      * @return current value of mDescription
      */
-    public String getDescription(){
+    public String getDescription() {
         return mDescription;
     }
-
 }

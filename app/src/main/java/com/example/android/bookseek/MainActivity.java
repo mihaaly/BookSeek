@@ -19,22 +19,29 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+/**
+ * App for finding books.
+ */
+
 public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<ArrayList<Book>> {
 
-
+    // tag for LogCat
     final static String LOG_TAG = "MainActivity";
+
     // BookAdapter.java custom ArrayAdapter
     private BookAdapter mAdapter;
 
     // base url
     final static String API_ENDPOINT = "https://www.googleapis.com/books/v1/volumes?maxResults=40&q=";
+
     // final query url
     String mJsonResponse;
 
+    // the ListView enumerating found books
     ListView mListView;
 
-    // TextView that is displayed when the list is empty or there is no connection
+    // TextView that is displayed when the list is empty or there is no connection or welcome screen
     private TextView mEmptyStateTextView;
 
     // loading spinner
@@ -42,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements
 
     // Get a reference to the ConnectivityManager to check state of network connectivity
     ConnectivityManager mConnectivityManager;
+
     // Get details on the currently active default data network
     NetworkInfo mActiveNetwork;
 
@@ -59,21 +67,23 @@ public class MainActivity extends AppCompatActivity implements
 
         // find ListView in the layout
         mListView = (ListView) findViewById(R.id.list);
+
         // find empty state TextView
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
+        // set EmptyStateTextView initial welcome message
         mEmptyStateTextView.setText(R.string.start_up);
         // set empty state view onto the list
         mListView.setEmptyView(mEmptyStateTextView);
-
 
         // Create a new adapter that takes an empty list of earthquakes as input
         mAdapter = new BookAdapter(this, new ArrayList<Book>());
         // set adapter on the ListView to be populated with Book.java objects
         mListView.setAdapter(mAdapter);
 
+        // get internet network status
         mConnectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         mActiveNetwork = mConnectivityManager.getActiveNetworkInfo();
-
+        // if there connection initialize LoaderManager, else display error message
         if (mActiveNetwork != null && mActiveNetwork.isConnected()) {
             //https://discussions.udacity.com/t/searchview-loaders-data-lost-after-phone-is-rotated/299919/4?u=mihaaly
             // rowlandmtetezi: thanks
@@ -90,32 +100,15 @@ public class MainActivity extends AppCompatActivity implements
             mEmptyStateTextView.setVisibility(View.VISIBLE);
             mEmptyStateTextView.setText(R.string.no_connection);
         }
-
-
-
-
-
-////        // if there is a network connection get data
-//        if (mActiveNetwork != null && mActiveNetwork.isConnected()){
-//            mEmptyStateTextView.setVisibility(View.GONE);
-//            mListView.setVisibility(View.VISIBLE);
-//
-//
-//            // otherwise display an error message
-//        } else {
-//            mListView.setVisibility(View.GONE);
-//            // update empty state view with error message
-//            mEmptyStateTextView.setVisibility(View.VISIBLE);
-//            mEmptyStateTextView.setText(R.string.no_connection);
-//        }
     }
 
 
     /**
      * Inflates App bar (e.g. SearchView action view).
+     *
      * @param menu toolbar_menu.xml
      * @return SearchView
-     *
+     * <p>
      * Source:
      */
     @Override
@@ -144,18 +137,28 @@ public class MainActivity extends AppCompatActivity implements
             public boolean onQueryTextSubmit(String query) {
                 Log.i(LOG_TAG, "TEST: onQueryTextSubmit");
 
-                // reset previous query url
-                mJsonResponse = "";
+                // if there is network connection proceed with the query, els display error message
+                mActiveNetwork = mConnectivityManager.getActiveNetworkInfo();
+                if (mActiveNetwork != null && mActiveNetwork.isConnected()) {
 
-                // create query url
-                mJsonResponse = API_ENDPOINT + query;
-                // fills in spaces for instance, 2nd argument is for escaping character not to be touched in the url
-                // source: https://discussions.udacity.com/t/book-listing-app-construct-the-query-url/203167/3?u=mihaaly
-                mJsonResponse = Uri.encode(mJsonResponse, ":/?&=");
+                    // reset previous query url
+                    mJsonResponse = "";
 
-                // reset loader from previous data
-                Log.i(LOG_TAG, "TEST: restartLoader");
-                getLoaderManager().restartLoader(0, null, MainActivity.this);
+                    // create query url
+                    mJsonResponse = API_ENDPOINT + query;
+                    // fills in spaces for instance, 2nd argument is for escaping character not to be touched in the url
+                    // source: https://discussions.udacity.com/t/book-listing-app-construct-the-query-url/203167/3?u=mihaaly
+                    mJsonResponse = Uri.encode(mJsonResponse, ":/?&=");
+
+                    // reset loader from previous data
+                    Log.i(LOG_TAG, "TEST: restartLoader");
+                    getLoaderManager().restartLoader(0, null, MainActivity.this);
+                } else {
+                    mLoadingSpinner.setVisibility(View.GONE);
+                    mListView.setVisibility(View.GONE);
+                    mEmptyStateTextView.setVisibility(View.VISIBLE);
+                    mEmptyStateTextView.setText(R.string.no_connection);
+                }
 
                 // return false for automatic keyboard hide
                 return false;
@@ -170,7 +173,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public Loader<ArrayList<Book>> onCreateLoader(int id, Bundle args) {
         Log.i(LOG_TAG, "TEST: onCreateLoader");
+
+        // hide any previous message
         mEmptyStateTextView.setVisibility(View.GONE);
+        // show progressbar
         mLoadingSpinner.setVisibility(View.VISIBLE);
         return new BookLoader(MainActivity.this, mJsonResponse);
     }
@@ -179,12 +185,9 @@ public class MainActivity extends AppCompatActivity implements
     public void onLoadFinished(Loader<ArrayList<Book>> loader, ArrayList<Book> books) {
         Log.i(LOG_TAG, "TEST: onLoadFinished");
 
-        // load is done, spinner may gone
+        // load is done, spinner may gone, the results (ListView) may be visible
         mLoadingSpinner.setVisibility(View.GONE);
-
-//        // no data found
-//        mEmptyStateTextView.setVisibility(View.VISIBLE);
-//        mEmptyStateTextView.setText(R.string.no_book);
+        mListView.setVisibility(View.VISIBLE);
 
         // Clear the adapter of previous book data
         mAdapter.clear();
@@ -199,7 +202,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<ArrayList<Book>> loader) {
         Log.i(LOG_TAG, "TEST: onLoaderReset");
+
         // Reset Adapter
         mAdapter.clear();
-            }
+    }
 }

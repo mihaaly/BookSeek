@@ -13,8 +13,10 @@
 
     <!-- when there is no net connection display this -->
     <string name="no_connection"> No internet connection available.</string>
+
     <!-- at start-up / before first search display this -->
     <string name="start_up">Tap and type at the top to find a book.</string>
+
     <!-- no book found-->
     <string name="no_book">No book has been found.</string>
 </resources>
